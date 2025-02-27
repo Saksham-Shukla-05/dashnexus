@@ -8,8 +8,21 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRef } from "react";
 
 export function LoginForm() {
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const handleLoginSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+
+    console.log("Data", email, password);
+
+    // server call
+  };
+
   return (
     <section className={"flex h-screen justify-center items-center"}>
       <Card className="w-full max-w-sm">
@@ -20,11 +33,12 @@ export function LoginForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleLoginSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
+                  ref={emailRef}
                   id="email"
                   type="email"
                   placeholder="m@example.com"
@@ -41,10 +55,19 @@ export function LoginForm() {
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  ref={passwordRef}
+                  id="password"
+                  type="password"
+                  required
+                />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button
+                onClick={handleLoginSubmit}
+                type="submit"
+                className="w-full"
+              >
+                Sign in
               </Button>
               <Button variant="outline" className="w-full">
                 Login with Google
