@@ -33,10 +33,12 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { useQuery } from "@tanstack/react-query";
-import { Badge, MoreHorizontal } from "lucide-react";
+import { Badge, CirclePlus, MoreHorizontal } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function BooksPage() {
   // add loading spinner and  error message
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["books"],
     queryFn: getBooks,
@@ -44,18 +46,25 @@ function BooksPage() {
   });
   return (
     <div>
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/dashboard/home">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Books</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <div className="flex items-center justify-between">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/dashboard/home">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Books</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <Link to={"/dashboard/books/create"}>
+          <Button className="">
+            Add Book <CirclePlus size={20} />
+          </Button>
+        </Link>
+      </div>
       <Card className="mt-6">
         <CardHeader>
           <CardTitle>Books</CardTitle>
