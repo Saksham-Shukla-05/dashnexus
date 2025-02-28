@@ -18,3 +18,5 @@ export const register = async (data: {
 }) => {
   return api.post("/auth/user/register", data);
 };
+
+export const getBooks = async () => api.get("/api/books");
