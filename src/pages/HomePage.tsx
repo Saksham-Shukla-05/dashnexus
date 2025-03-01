@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -20,8 +21,7 @@ import {
   Activity,
   ArrowUpRight,
   CreditCard,
-  DollarSign,
-  Table,
+  IndianRupee,
   Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -38,10 +38,10 @@ function HomePage() {
                   <CardTitle className="text-sm font-medium">
                     Total Revenue
                   </CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  <IndianRupee className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
+                  <div className="text-2xl font-bold">₹45,231.89</div>
                   <p className="text-xs text-muted-foreground">
                     +20.1% from last month
                   </p>
@@ -88,16 +88,18 @@ function HomePage() {
                 </CardContent>
               </Card>
             </div>
-            <div className="grid gap-4  md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <Card className="xl:col-span-1" x-chunk="dashboard-01-chunk-4">
-                <CardHeader className="flex  flex-col items-start">
-                  <div className="flex flex-row justify-between w-full gap-5">
+                <CardHeader className="flex  flex-col items-center">
+                  <div className="flex flex-row justify-between gap-3">
                     <CardTitle>Transactions</CardTitle>
-                    <Button asChild size={"sm"} className="ml-auto gap-1">
-                      <Link to="#">
-                        View All
-                        <ArrowUpRight size={20} />
-                      </Link>
+                    <Button
+                      variant={"outline"}
+                      size="sm"
+                      className="mt-auto gap-1 px-4"
+                    >
+                      <Link to="#">View All</Link>
+                      <ArrowUpRight className="h-4 w-4" />
                     </Button>
                   </div>
                   <CardDescription>
@@ -140,7 +142,7 @@ function HomePage() {
                         <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                           2023-06-23
                         </TableCell>
-                        <TableCell className="text-right">$250.00</TableCell>
+                        <TableCell className="text-right">₹250.00</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>
@@ -160,7 +162,7 @@ function HomePage() {
                         <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                           2023-06-24
                         </TableCell>
-                        <TableCell className="text-right">$150.00</TableCell>
+                        <TableCell className="text-right">₹150.00</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>
@@ -180,7 +182,7 @@ function HomePage() {
                         <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                           2023-06-25
                         </TableCell>
-                        <TableCell className="text-right">$350.00</TableCell>
+                        <TableCell className="text-right">₹350.00</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>
@@ -200,7 +202,7 @@ function HomePage() {
                         <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                           2023-06-26
                         </TableCell>
-                        <TableCell className="text-right">$450.00</TableCell>
+                        <TableCell className="text-right">₹450.00</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>
@@ -220,7 +222,7 @@ function HomePage() {
                         <TableCell className="hidden md:table-cell lg:hidden xl:table-column">
                           2023-06-27
                         </TableCell>
-                        <TableCell className="text-right">$550.00</TableCell>
+                        <TableCell className="text-right">₹550.00</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -244,7 +246,7 @@ function HomePage() {
                         olivia.martin@email.com
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">+$1,999.00</div>
+                    <div className="ml-auto font-medium">+ ₹1,999.00</div>
                   </div>
                   <div className="flex items-center gap-4">
                     <Avatar className="hidden h-9 w-9 sm:flex">
@@ -259,7 +261,7 @@ function HomePage() {
                         jackson.lee@email.com
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">+$39.00</div>
+                    <div className="ml-auto font-medium">+ ₹39.00</div>
                   </div>
                   <div className="flex items-center gap-4">
                     <Avatar className="hidden h-9 w-9 sm:flex">
@@ -274,7 +276,7 @@ function HomePage() {
                         isabella.nguyen@email.com
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">+$299.00</div>
+                    <div className="ml-auto font-medium">+ ₹299.00</div>
                   </div>
                   <div className="flex items-center gap-4">
                     <Avatar className="hidden h-9 w-9 sm:flex">
@@ -289,7 +291,7 @@ function HomePage() {
                         will@email.com
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">+$99.00</div>
+                    <div className="ml-auto font-medium">+ ₹99.00</div>
                   </div>
                   <div className="flex items-center gap-4">
                     <Avatar className="hidden h-9 w-9 sm:flex">
@@ -304,7 +306,7 @@ function HomePage() {
                         sofia.davis@email.com
                       </p>
                     </div>
-                    <div className="ml-auto font-medium">+$39.00</div>
+                    <div className="ml-auto font-medium">+ ₹39.00</div>
                   </div>
                 </CardContent>
               </Card>
