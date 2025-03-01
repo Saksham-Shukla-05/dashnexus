@@ -16,7 +16,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 export const login = async (data: { email: string; password: string }) => {
-  return api.post("/auth/user/login", data);
+  return api.post("/api/users/login", data);
 };
 
 export const register = async (data: {
@@ -24,7 +24,7 @@ export const register = async (data: {
   email: string;
   password: string;
 }) => {
-  return api.post("/auth/user/register", data);
+  return api.post("/api/users/register", data);
 };
 
 export const getBooks = async () => api.get("/api/books");

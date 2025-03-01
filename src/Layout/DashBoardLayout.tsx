@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/components/toggle";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -28,7 +29,7 @@ import {
   Search,
   ShoppingCart,
 } from "lucide-react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, Navigate, NavLink, Outlet } from "react-router-dom";
 
 const DashboardLayout = () => {
   const { token, setToken } = useTokenStore((state) => state);
@@ -38,9 +39,9 @@ const DashboardLayout = () => {
     //logging out
     setToken("");
   };
-  //   if (!token) {
-  //     return <Navigate to={"/auth/login"} replace />;
-  //   }
+  if (!token) {
+    return <Navigate to={"/auth/login"} replace />;
+  }
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -158,7 +159,7 @@ const DashboardLayout = () => {
               </div>
             </SheetContent>
           </Sheet>
-          <div className="w-full flex-1">
+          <div className="w-full flex-2">
             <form>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -169,6 +170,9 @@ const DashboardLayout = () => {
                 />
               </div>
             </form>
+          </div>
+          <div className="w-full flex-1">
+            <ModeToggle />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
