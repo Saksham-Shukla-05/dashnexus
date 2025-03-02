@@ -19,6 +19,10 @@ export const login = async (data: { email: string; password: string }) => {
   return api.post("/api/users/login", data);
 };
 
+export const getName = async () => {
+  return api.get("/api/users/profile");
+};
+
 export const register = async (data: {
   name: string;
   email: string;

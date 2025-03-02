@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import useTokenStore from "@/store";
-
 import {
   Bell,
   CircleUser,
@@ -29,16 +28,22 @@ import {
   Search,
   ShoppingCart,
 } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 import { Link, Navigate, NavLink, Outlet } from "react-router-dom";
 
 const DashboardLayout = () => {
-  const { token, setToken } = useTokenStore((state) => state);
+  const { token, setToken, user, setUser } = useTokenStore((state) => state);
 
   const logout = (event: React.FormEvent) => {
     event.preventDefault();
-    //logging out
+    toast.success("Logged Out Successfully", {});
+
     setToken("");
+    setUser(null);
+
+    useTokenStore.persist.clearStorage();
   };
+
   if (!token) {
     return <Navigate to={"/auth/login"} replace />;
   }
@@ -181,8 +186,10 @@ const DashboardLayout = () => {
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuContent align="center">
+              <DropdownMenuLabel className="font-bold">
+                {user?.name}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
@@ -197,6 +204,7 @@ const DashboardLayout = () => {
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           <Outlet />
+          <Toaster />
         </main>
       </div>
     </div>
