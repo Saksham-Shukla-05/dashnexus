@@ -1,4 +1,11 @@
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -89,7 +96,7 @@ function BooksPage() {
     },
   });
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["books"],
     queryFn: getBooks,
     staleTime: 10000, // in Milli-seconds
@@ -143,116 +150,141 @@ function BooksPage() {
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {data?.data.map((book: Book) => {
-                return (
-                  <TableRow key={book._id}>
-                    <TableCell className="hidden sm:table-cell">
-                      <img
-                        alt={book.title}
-                        className="aspect-square rounded-md object-cover"
-                        height="64"
-                        src={book.coverImage}
-                        width="64"
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">{book.title}</TableCell>
-                    <TableCell>{book.genre}</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {book.author?.name}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {formattedDate(book.createdAt)}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu
-                        onOpenChange={(isOpen) =>
-                          handleDropdown(book._id, isOpen)
-                        }
-                      >
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="outline"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="center" side="top">
-                          <DropdownMenuItem className="outline-none">
-                            {" "}
-                            Actions
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem className="mt-2 outline-none">
-                            <Link to={`/dashboard/books/${book._id}`}>
+            {isFetching ? (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-4">
+                    Fetching data...
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            ) : (
+              <TableBody>
+                {data?.data.map((book: Book) => {
+                  return (
+                    <TableRow key={book._id}>
+                      <TableCell className="hidden sm:table-cell">
+                        <img
+                          alt={book.title}
+                          className="aspect-square rounded-md object-cover"
+                          height="64"
+                          src={book.coverImage}
+                          width="64"
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        <Link to={`/dashboard/books/${book._id}`}>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>{book.title}</TooltipTrigger>
+                              <TooltipContent>
+                                <p>View Book</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </Link>
+                      </TableCell>
+                      <TableCell>{book.genre}</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {book.author?.name}
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {formattedDate(book.createdAt)}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu
+                          onOpenChange={(isOpen) =>
+                            handleDropdown(book._id, isOpen)
+                          }
+                        >
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              aria-haspopup="true"
+                              size="icon"
+                              variant="outline"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Toggle menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="center" side="top">
+                            <DropdownMenuItem className="outline-none">
                               {" "}
-                              Edit
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="mt-2 outline-none"
-                            onSelect={(e) => e.preventDefault()}
-                            onClick={() => handleOpen(book._id, true)}
-                          >
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                      <Dialog
-                        open={openStates[book._id] || false}
-                        onOpenChange={(isOpen) => handleOpen(book._id, isOpen)}
-                      >
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle className="text-center">
-                              Are you sure you want to{" "}
-                              <strong className="text-red-700">Delete</strong>{" "}
-                              this book?
-                            </DialogTitle>
-                            <DialogDescription className="text-center  flex justify-center gap-4">
-                              <Button
-                                className="mt-4"
-                                size="sm"
-                                onClick={() => mutation.mutate(book._id)}
-                                disabled={mutation.isPending}
-                              >
-                                {mutation.isPending ? "Deleting..." : "Yes"}
-                              </Button>
-                              <Button
-                                className="mt-4"
-                                size="sm"
-                                onClick={() => {
-                                  handleOpen(book._id, false);
-                                  handleDropdown(book._id, false);
-                                }}
-                              >
-                                No
-                              </Button>
-                            </DialogDescription>
-                          </DialogHeader>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
+                              Actions
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="mt-2 outline-none">
+                              <Link to={`/dashboard/books/edit/${book._id}`}>
+                                {" "}
+                                Edit
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="mt-2 outline-none"
+                              onSelect={(e) => e.preventDefault()}
+                              onClick={() => handleOpen(book._id, true)}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        <Dialog
+                          open={openStates[book._id] || false}
+                          onOpenChange={(isOpen) =>
+                            handleOpen(book._id, isOpen)
+                          }
+                        >
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle className="text-center">
+                                Are you sure you want to{" "}
+                                <strong className="text-red-700">Delete</strong>{" "}
+                                this book?
+                              </DialogTitle>
+                              <DialogDescription className="text-center  flex justify-center gap-4">
+                                <Button
+                                  className="mt-4"
+                                  size="sm"
+                                  onClick={() => mutation.mutate(book._id)}
+                                  disabled={mutation.isPending}
+                                >
+                                  {mutation.isPending ? "Deleting..." : "Yes"}
+                                </Button>
+                                <Button
+                                  className="mt-4"
+                                  size="sm"
+                                  onClick={() => {
+                                    handleOpen(book._id, false);
+                                    handleDropdown(book._id, false);
+                                  }}
+                                >
+                                  No
+                                </Button>
+                              </DialogDescription>
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            )}
           </Table>
         </CardContent>
         <CardFooter>
-          <div className="text-xs text-center w-full text-muted-foreground">
-            {data?.data.length > 0 ? (
-              <>
-                Showing <strong>1</strong> of{" "}
-                <strong>{data?.data.length}</strong> products
-              </>
-            ) : (
-              "You have no books"
-            )}
-          </div>
+          {!isFetching && (
+            <div className="text-xs text-center w-full text-muted-foreground">
+              {data?.data.length > 0 ? (
+                <>
+                  Showing <strong>1</strong> of{" "}
+                  <strong>{data?.data.length}</strong> products
+                </>
+              ) : (
+                "You have no books"
+              )}
+            </div>
+          )}
         </CardFooter>
       </Card>
     </div>
