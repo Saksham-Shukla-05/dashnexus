@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -85,10 +86,13 @@ function EditBook() {
 
   const mutation = useMutation({
     mutationFn: ({ bookId, formData }) => editBook(bookId, formData),
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["books"] });
-      console.log("Book created successfully");
+      toast.success(response.message);
       navigate("/dashboard/books");
+    },
+    onError: (response) => {
+      toast.error(response.message);
     },
   });
 

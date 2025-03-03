@@ -31,8 +31,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createBook } from "@/http/api";
-import toast from "react-hot-toast";
-
+import { toast } from "sonner";
 const formSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
@@ -69,10 +68,14 @@ function CreateBook() {
 
   const mutation = useMutation({
     mutationFn: createBook,
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["books"] });
-      console.log("Book created successfully");
+      console.log(response);
+      toast.success(response.message);
       navigate("/dashboard/books");
+    },
+    onError: (response) => {
+      toast.error(response.message);
     },
   });
 

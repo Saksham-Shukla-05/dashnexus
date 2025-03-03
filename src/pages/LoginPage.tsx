@@ -13,12 +13,9 @@ import { cn } from "@/lib/utils";
 import useTokenStore from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, Toaster } from "react-hot-toast";
-
-import "react-toastify/dist/ReactToastify.css";
-
+import { toast } from "sonner";
 export function LoginForm() {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -28,12 +25,13 @@ export function LoginForm() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (response) => {
-      console.log(response);
-
       setToken(response.data.accessToken);
       setUser(response.data.user);
+
       toast.success("Login Successfull");
-      navigate("/dashboard/home");
+      setTimeout(() => {
+        navigate("/dashboard/home");
+      }, 2000);
     },
   });
 
@@ -49,20 +47,19 @@ export function LoginForm() {
     mutation.mutate({ email, password });
   };
 
+  useEffect(() => {
+    if (mutation.isError) {
+      toast.error(mutation.error?.response?.data?.message || "Login failed");
+    }
+  }, [mutation.isError, mutation.error]);
   return (
     <>
-      <Toaster />
       <section className={"flex h-screen justify-center items-center"}>
         <Card className="w-full max-w-sm">
           <CardHeader>
             <CardTitle className=" text-2xl">Login</CardTitle>
             <CardDescription>
               Enter your email below to login to your account <br />
-              {mutation.isError && (
-                <p className="text-red-700 mt-2 w-full text-sm">
-                  {mutation.error?.response?.data?.message}
-                </p>
-              )}
             </CardDescription>
           </CardHeader>
           <CardContent>

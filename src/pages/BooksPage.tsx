@@ -41,15 +41,10 @@ import {
 import { deleteBook, getBooks } from "@/http/api";
 import { Book } from "@/types";
 
-import {
-  QueryClient,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CirclePlus, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 import { Link } from "react-router-dom";
 
@@ -85,13 +80,12 @@ function BooksPage() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: deleteBook,
-    onSuccess: () => {
-      toast.success("Book deleted successfully");
+    onSuccess: (response) => {
+      toast.success(`${response.Book} deleted successfully`);
       queryClient.invalidateQueries({ queryKey: ["books"] });
     },
-    onError: (error) => {
-      toast.error("Failed to delete book");
-      console.error(error);
+    onError: (response) => {
+      toast.error(response.message);
     },
   });
 
