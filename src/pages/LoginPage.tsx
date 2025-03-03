@@ -37,8 +37,6 @@ export function LoginForm() {
     },
   });
 
-  console.log();
-
   const handleLoginSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const email = emailRef.current?.value;

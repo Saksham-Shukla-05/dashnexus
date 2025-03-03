@@ -28,11 +28,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createBook } from "@/http/api";
-import toast from "react-hot-toast";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { editBook, getSingleBook } from "@/http/api";
+import { useEffect } from "react";
 const formSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
@@ -50,8 +50,15 @@ const formSchema = z.object({
     return file.length == 1;
   }, "Book PDF is required"),
 });
-function CreateBook() {
+
+function EditBook() {
   const navigate = useNavigate();
+  const params = useParams();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["book"],
+    queryFn: () => getSingleBook(params.bookId!),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,13 +69,22 @@ function CreateBook() {
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      form.reset({
+        title: data.title || "",
+        genre: data.genre || "",
+        description: data.description || "",
+      });
+    }
+  }, [data, form]);
   const coverImageRef = form.register("coverImage");
   const fileRef = form.register("file");
 
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: createBook,
+    mutationFn: ({ bookId, formData }) => editBook(bookId, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["books"] });
       console.log("Book created successfully");
@@ -77,6 +93,13 @@ function CreateBook() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const bookId = params.bookId;
+
+    if (!bookId) {
+      console.error("Book ID is missing!");
+      return;
+    }
+
     const formdata = new FormData();
     formdata.append("title", values.title);
     formdata.append("genre", values.genre);
@@ -84,9 +107,10 @@ function CreateBook() {
     formdata.append("coverImage", values.coverImage[0]);
     formdata.append("file", values.file[0]);
 
-    mutation.mutate(formdata);
+    //@ts-expect-error
+    mutation.mutate({ bookId, formData: formdata });
 
-    console.log(values);
+    console.log("Form Data Submitted:", formdata);
   }
 
   return (
@@ -105,7 +129,7 @@ function CreateBook() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Create</BreadcrumbPage>
+                  <BreadcrumbPage>Edit</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -214,4 +238,4 @@ function CreateBook() {
   );
 }
 
-export default CreateBook;
+export default EditBook;

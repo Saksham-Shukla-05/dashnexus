@@ -19,10 +19,6 @@ export const login = async (data: { email: string; password: string }) => {
   return api.post("/api/users/login", data);
 };
 
-export const getName = async () => {
-  return api.get("/api/users/profile");
-};
-
 export const register = async (data: {
   name: string;
   email: string;
@@ -31,11 +27,36 @@ export const register = async (data: {
   return api.post("/api/users/register", data);
 };
 
-export const getBooks = async () => api.get("/api/books");
+export const getBooks = async () => {
+  const response = await api.get("/api/books"); // Ensure this fetches fresh data
+  return response;
+};
 
-export const createBook = async (data: FormData) =>
-  api.post("/api/books", data, {
+export const createBook = async (data: FormData) => {
+  const response = await api.post("/api/books", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
+  return response.data;
+};
+
+export const editBook = async (bookId: string, data: FormData) => {
+  const response = await api.patch(`/api/books/${bookId}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
+export const getSingleBook = async (bookId: string) => {
+  const response = await api.get(`/api/books/${bookId}`);
+  return response.data;
+};
+
+export const deleteBook = async (bookId: string) => {
+  const response = await api.delete(`/api/books/${bookId}`);
+  return response.data;
+};

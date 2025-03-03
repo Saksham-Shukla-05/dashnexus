@@ -16,6 +16,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Table,
   TableBody,
   TableCell,
@@ -23,27 +38,69 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getBooks } from "@/http/api";
+import { deleteBook, getBooks } from "@/http/api";
 import { Book } from "@/types";
+
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import { useQuery } from "@tanstack/react-query";
-import { Badge, CirclePlus, MoreHorizontal } from "lucide-react";
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { CirclePlus, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+
 import { Link } from "react-router-dom";
+
+const formattedDate = (date: string) => {
+  const formattedDate = new Date(date).toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
+  return formattedDate;
+};
 
 function BooksPage() {
   // add loading spinner and  error message
+  const [openStates, setOpenStates] = useState<{ [key: string]: boolean }>({});
+  const [dropdownStates, setDropdownStates] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const handleOpen = (bookId: string, isOpen: boolean) => {
+    setOpenStates((prev) => ({ ...prev, [bookId]: isOpen }));
+  };
+
+  const handleDropdown = (bookId: string, isOpen: boolean) => {
+    setDropdownStates((prev) => ({ ...prev, [bookId]: isOpen }));
+  };
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: deleteBook,
+    onSuccess: () => {
+      toast.success("Book deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+    },
+    onError: (error) => {
+      toast.error("Failed to delete book");
+      console.error(error);
+    },
+  });
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["books"],
     queryFn: getBooks,
-    staleTime: 10000, // in milliseconds
+    staleTime: 10000, // in Milli-seconds
   });
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -106,33 +163,84 @@ function BooksPage() {
                       />
                     </TableCell>
                     <TableCell className="font-medium">{book.title}</TableCell>
-                    <TableCell>
-                      <Badge fontVariant="outline">{book.genre}</Badge>
+                    <TableCell>{book.genre}</TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      {book.author?.name}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      {book.author.name}
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {book.createdAt}
+                      {formattedDate(book.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
+                      <DropdownMenu
+                        onOpenChange={(isOpen) =>
+                          handleDropdown(book._id, isOpen)
+                        }
+                      >
                         <DropdownMenuTrigger asChild>
                           <Button
                             aria-haspopup="true"
                             size="icon"
-                            variant="ghost"
+                            variant="outline"
                           >
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Toggle menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuContent align="center" side="top">
+                          <DropdownMenuItem className="outline-none">
+                            {" "}
+                            Actions
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="mt-2 outline-none">
+                            <Link to={`/dashboard/books/${book._id}`}>
+                              {" "}
+                              Edit
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="mt-2 outline-none"
+                            onSelect={(e) => e.preventDefault()}
+                            onClick={() => handleOpen(book._id, true)}
+                          >
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
+                      <Dialog
+                        open={openStates[book._id] || false}
+                        onOpenChange={(isOpen) => handleOpen(book._id, isOpen)}
+                      >
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle className="text-center">
+                              Are you sure you want to{" "}
+                              <strong className="text-red-700">Delete</strong>{" "}
+                              this book?
+                            </DialogTitle>
+                            <DialogDescription className="text-center  flex justify-center gap-4">
+                              <Button
+                                className="mt-4"
+                                size="sm"
+                                onClick={() => mutation.mutate(book._id)}
+                                disabled={mutation.isPending}
+                              >
+                                {mutation.isPending ? "Deleting..." : "Yes"}
+                              </Button>
+                              <Button
+                                className="mt-4"
+                                size="sm"
+                                onClick={() => {
+                                  handleOpen(book._id, false);
+                                  handleDropdown(book._id, false);
+                                }}
+                              >
+                                No
+                              </Button>
+                            </DialogDescription>
+                          </DialogHeader>
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 );
@@ -141,8 +249,15 @@ function BooksPage() {
           </Table>
         </CardContent>
         <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
+          <div className="text-xs text-center w-full text-muted-foreground">
+            {data?.data.length > 0 ? (
+              <>
+                Showing <strong>1</strong> of{" "}
+                <strong>{data?.data.length}</strong> products
+              </>
+            ) : (
+              "You have no books"
+            )}
           </div>
         </CardFooter>
       </Card>
