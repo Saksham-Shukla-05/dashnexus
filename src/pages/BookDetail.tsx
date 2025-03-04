@@ -6,6 +6,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/card";
 import { getSingleBook } from "@/http/api";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function BookDetail() {
   const { bookId } = useParams();
@@ -27,11 +28,9 @@ function BookDetail() {
     staleTime: 10000, // in Milli-seconds
   });
 
-  console.log(data);
-
   return (
     <div>
-      <div className="flex items-center mt-2 justify-between">
+      <div className="flex items-center  justify-between">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -47,6 +46,11 @@ function BookDetail() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+        <div className="flex items-center gap-4">
+          <Button type="submit">
+            <span className="ml-2">Promote this book</span>
+          </Button>
+        </div>
       </div>
       <Card className="mt-6">
         <CardHeader>
