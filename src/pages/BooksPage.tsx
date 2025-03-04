@@ -28,7 +28,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -54,6 +53,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Link } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const formattedDate = (date: string) => {
   const formattedDate = new Date(date).toLocaleString("en-US", {
@@ -135,35 +135,44 @@ function BooksPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="hidden w-[100px] sm:table-cell">
-                  <span className="sr-only">Image</span>
+                  <span className="ml-3">Image</span>
                 </TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Genre</TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Author name
-                </TableHead>
-                <TableHead className="hidden md:table-cell">
+                <TableHead className=" text-center ">Title</TableHead>
+                <TableHead className=" text-center ">Genre</TableHead>
+
+                <TableHead className="hidden text-center md:table-cell">
                   Created at
                 </TableHead>
-                <TableHead>
+                <TableHead className=" text-center ">
                   <span className="sr-only">Actions</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
-            {isFetching ? (
-              <TableBody>
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4">
-                    Fetching data...
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            ) : (
-              <TableBody>
-                {data?.data.map((book: Book) => {
-                  return (
+            <TableBody>
+              {isFetching
+                ? [...Array(data?.data.length)].map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className="h-6 w-16" />
+                      </TableCell>
+
+                      <TableCell>
+                        <Skeleton className="h-6 w-20" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-6 w-24" />
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <Skeleton className="h-6 w-28" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-6 w-16" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : data?.data.map((book: Book) => (
                     <TableRow key={book._id}>
-                      <TableCell className="hidden sm:table-cell">
+                      <TableCell className="hidden   sm:table-cell">
                         <img
                           alt={book.title}
                           className="aspect-square rounded-md object-cover"
@@ -172,7 +181,7 @@ function BooksPage() {
                           width="64"
                         />
                       </TableCell>
-                      <TableCell className="font-medium">
+                      <TableCell className="text-center font-medium">
                         <Link to={`/dashboard/books/${book._id}`}>
                           <TooltipProvider>
                             <Tooltip>
@@ -184,14 +193,14 @@ function BooksPage() {
                           </TooltipProvider>
                         </Link>
                       </TableCell>
-                      <TableCell>{book.genre}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {book.author?.name}
+                      <TableCell className="text-center">
+                        {book.genre}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">
+
+                      <TableCell className=" text-center hidden md:table-cell">
                         {formattedDate(book.createdAt)}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
                         <DropdownMenu
                           onOpenChange={(isOpen) =>
                             handleDropdown(book._id, isOpen)
@@ -209,7 +218,6 @@ function BooksPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="center" side="top">
                             <DropdownMenuItem className="outline-none">
-                              {" "}
                               Actions
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -241,7 +249,7 @@ function BooksPage() {
                                 <strong className="text-red-700">Delete</strong>{" "}
                                 this book?
                               </DialogTitle>
-                              <DialogDescription className="text-center  flex justify-center gap-4">
+                              <DialogDescription className="text-center flex justify-center gap-4">
                                 <Button
                                   className="mt-4"
                                   size="sm"
@@ -266,10 +274,8 @@ function BooksPage() {
                         </Dialog>
                       </TableCell>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            )}
+                  ))}
+            </TableBody>
           </Table>
         </CardContent>
         <CardFooter>
@@ -280,8 +286,10 @@ function BooksPage() {
                   Showing <strong>1</strong> of{" "}
                   <strong>{data?.data.length}</strong> products
                 </>
-              ) : (
+              ) : !isError ? (
                 "You have no books"
+              ) : (
+                "Error while fetching data"
               )}
             </div>
           )}
