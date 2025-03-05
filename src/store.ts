@@ -12,6 +12,8 @@ export interface TokenStore {
   setToken: (data: string) => void;
   user: User | null;
   setUser: (data: User) => void;
+  currentPage: number; // Add page state
+  setCurrentPage: (page: number) => void;
 }
 
 const useTokenStore = create<TokenStore>()(
@@ -22,6 +24,8 @@ const useTokenStore = create<TokenStore>()(
         setToken: (data: string) => set(() => ({ token: data })),
         user: null, // Start with null
         setUser: (data: User) => set(() => ({ user: data })),
+        currentPage: 1, // Default page
+        setCurrentPage: (page: number) => set(() => ({ currentPage: page })),
       }),
       { name: "token-store" }
     )

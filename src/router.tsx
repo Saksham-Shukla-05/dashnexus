@@ -8,6 +8,7 @@ import AuthLayout from "./Layout/AuthLayout";
 import CreateBook from "./pages/CreateBook";
 import EditBook from "./pages/EditBook";
 import BookDetail from "./pages/BookDetail";
+import Subscribers from "./pages/Subscribers";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "books/create",
         element: <CreateBook />,
+      },
+      {
+        path: "Subscribers",
+        element: <Subscribers />,
       },
       {
         path: "books/edit/:bookId",

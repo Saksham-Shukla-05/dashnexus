@@ -6,6 +6,15 @@ import {
 } from "@/components/ui/tooltip";
 
 import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -54,6 +63,7 @@ import { toast } from "sonner";
 
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
+import useTokenStore from "@/store";
 
 const formattedDate = (date: string) => {
   const formattedDate = new Date(date).toLocaleString("en-US", {
@@ -76,6 +86,9 @@ function BooksPage() {
     [key: string]: boolean;
   }>({});
 
+  const { currentPage, setCurrentPage } = useTokenStore();
+  const [limit, setLimit] = useState(5); // Default limit
+
   const handleOpen = (bookId: string, isOpen: boolean) => {
     setOpenStates((prev) => ({ ...prev, [bookId]: isOpen }));
   };
@@ -96,11 +109,19 @@ function BooksPage() {
     },
   });
 
-  const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["books"],
-    queryFn: getBooks,
+  const { data, isError, isFetching } = useQuery({
+    queryKey: ["books", currentPage, limit],
+    queryFn: () => getBooks(currentPage, limit),
     staleTime: 10000, // in Milli-seconds
   });
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // const handleLimitChange = (newLimit: number) => {
+  //   setLimit(newLimit);
+  // };
 
   return (
     <div>
@@ -170,7 +191,7 @@ function BooksPage() {
                       </TableCell>
                     </TableRow>
                   ))
-                : data?.data.map((book: Book) => (
+                : data?.data.book.map((book: Book) => (
                     <TableRow key={book._id}>
                       <TableCell className="hidden   sm:table-cell">
                         <img
@@ -281,10 +302,13 @@ function BooksPage() {
         <CardFooter>
           {!isFetching && (
             <div className="text-xs text-center w-full text-muted-foreground">
-              {data?.data.length > 0 ? (
+              {data?.data.book.length > 0 ? (
                 <>
-                  Showing <strong>1</strong> of{" "}
-                  <strong>{data?.data.length}</strong> products
+                  Showing{" "}
+                  <strong>
+                    {Math.min(currentPage * limit, data?.data.totalBooks)}
+                  </strong>{" "}
+                  of <strong>{data?.data.totalBooks}</strong> products
                 </>
               ) : !isError ? (
                 "You have no books"
@@ -295,6 +319,36 @@ function BooksPage() {
           )}
         </CardFooter>
       </Card>
+      {isFetching ? (
+        ""
+      ) : (
+        <Pagination>
+          <PaginationContent>
+            {currentPage > 1 && (
+              <PaginationPrevious
+                className="cursor-pointer "
+                onClick={() => handlePageChange(currentPage - 1)}
+              ></PaginationPrevious>
+            )}
+            {[...Array(data?.data.totalPages)].map((_, index) => (
+              <PaginationItem key={index} className="cursor-pointer ">
+                <PaginationLink
+                  onClick={() => handlePageChange(index + 1)}
+                  isActive={currentPage === index + 1}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            {currentPage < data?.data.totalPages && (
+              <PaginationNext
+                className="cursor-pointer "
+                onClick={() => handlePageChange(currentPage + 1)}
+              ></PaginationNext>
+            )}
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 }

@@ -20,6 +20,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import useTokenStore from "@/store";
 import {
   Bell,
+  BookUser,
   CircleUser,
   Home,
   Menu,
@@ -89,6 +90,18 @@ const DashboardLayout = () => {
                 >
                   <Package className="h-4 w-4" />
                   Books{" "}
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/Subscribers"
+                  className={({ isActive }) => {
+                    return `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
+                      isActive && "bg-muted"
+                    }`;
+                  }}
+                >
+                  <BookUser className="h-4 w-4" />
+                  Followers
                 </NavLink>
               </nav>
             </div>

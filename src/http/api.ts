@@ -27,8 +27,14 @@ export const register = async (data: {
   return api.post("/api/users/register", data);
 };
 
-export const getBooks = async () => {
-  const response = await api.get("/api/books"); // Ensure this fetches fresh data
+export const getBooks = async (page: number, limit: number) => {
+  const response = await api.get("/api/books", {
+    params: {
+      page,
+      limit,
+    },
+  });
+
   return response;
 };
 
