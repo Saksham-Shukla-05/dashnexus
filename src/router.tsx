@@ -1,6 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import { LoginForm } from "./pages/LoginPage";
+import LoginForm from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardLayout from "./Layout/DashBoardLayout";
 import BooksPage from "./pages/BooksPage";
@@ -9,13 +9,13 @@ import CreateBook from "./pages/CreateBook";
 import EditBook from "./pages/EditBook";
 import BookDetail from "./pages/BookDetail";
 import Subscribers from "./pages/Subscribers";
+import UserHomePage from "./pages/UserHomePage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/dashboard/home" />,
   },
-
   {
     path: "dashboard",
     element: <DashboardLayout />,
@@ -59,6 +59,10 @@ const router = createBrowserRouter([
         element: <RegisterPage />,
       },
     ],
+  },
+  {
+    path: "/user",
+    element: <UserHomePage />,
   },
 ]);
 

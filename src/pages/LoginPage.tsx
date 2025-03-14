@@ -16,7 +16,7 @@ import { LoaderCircle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-export function LoginForm() {
+const LoginForm = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -27,10 +27,16 @@ export function LoginForm() {
     onSuccess: (response) => {
       setToken(response.data.accessToken);
       setUser(response.data.user);
-
       toast.success("Login Successfull");
+
+      console.log();
+
       setTimeout(() => {
-        navigate("/dashboard/home");
+        if (response.data.user.role === "0") {
+          navigate("/user");
+        } else {
+          navigate("/dashboard/home");
+        }
       }, 2000);
     },
   });
@@ -124,4 +130,5 @@ export function LoginForm() {
       </section>
     </>
   );
-}
+};
+export default LoginForm;

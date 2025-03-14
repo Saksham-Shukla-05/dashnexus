@@ -16,7 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import useTokenStore from "@/store";
 import {
   Bell,
@@ -45,7 +50,7 @@ const DashboardLayout = () => {
     useTokenStore.persist.clearStorage();
   };
 
-  if (!token) {
+  if (!token || !user || user.role != "1") {
     return <Navigate to={"/auth/login"} replace />;
   }
   return (
@@ -137,28 +142,48 @@ const DashboardLayout = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="flex flex-col">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <nav className="grid gap-2 text-lg font-medium">
                   <Link
-                    to="#"
+                    to=""
                     className="flex items-center gap-2 text-lg font-semibold"
                   >
                     <Package2 className="h-6 w-6" />
                     <span>Dash Nexus</span>
                   </Link>
-                  <Link
-                    to="#"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                  <NavLink
+                    to="/dashboard/home"
+                    className={({ isActive }) => {
+                      return `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
+                        isActive && "bg-muted"
+                      }`;
+                    }}
                   >
-                    <Home className="h-5 w-5" />
+                    <Home className="h-4 w-4" />
                     Home
-                  </Link>
-                  <Link
-                    to="#"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard/books"
+                    className={({ isActive }) => {
+                      return `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
+                        isActive && "bg-muted"
+                      }`;
+                    }}
                   >
-                    <ShoppingCart className="h-5 w-5" />
-                    Books
-                  </Link>
+                    <Package className="h-4 w-4" />
+                    Books{" "}
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard/Subscribers"
+                    className={({ isActive }) => {
+                      return `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
+                        isActive && "bg-muted"
+                      }`;
+                    }}
+                  >
+                    <BookUser className="h-4 w-4" />
+                    Followers
+                  </NavLink>
                 </nav>
                 <div className="mt-auto">
                   <Card>
@@ -206,7 +231,7 @@ const DashboardLayout = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center">
                 <DropdownMenuLabel className="font-bold">
-                  {user?.name}
+                  {user?.name || "No Name"}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Settings</DropdownMenuItem>

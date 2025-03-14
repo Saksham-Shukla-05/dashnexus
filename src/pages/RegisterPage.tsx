@@ -14,21 +14,30 @@ import useTokenStore from "@/store";
 import { useMutation } from "@tanstack/react-query";
 import { LoaderCircle } from "lucide-react";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const RegisterPage = () => {
   const NameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+
   const navigate = useNavigate();
   const setToken = useTokenStore((state) => state.setToken);
   const mutation = useMutation({
     mutationFn: register,
     onSuccess: (response) => {
       setToken(response.data.accessToken);
-      navigate("/dashboard/home");
+
+      navigate("/user");
     },
     onError: (res) => {
       toast.error(res.response.data.message[0] || res.response.data.message);
