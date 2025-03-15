@@ -10,6 +10,7 @@ import EditBook from "./pages/EditBook";
 import BookDetail from "./pages/BookDetail";
 import Subscribers from "./pages/Subscribers";
 import UserHomePage from "./pages/UserHomePage";
+import UserHomeLayout from "./Layout/UserHomeLayout";
 
 const router = createBrowserRouter([
   {
@@ -61,8 +62,14 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/user",
-    element: <UserHomePage />,
+    path: "userDashboard",
+    element: <UserHomeLayout />,
+    children: [
+      {
+        path: "home",
+        element: <UserHomePage />,
+      },
+    ],
   },
 ]);
 

@@ -36,8 +36,7 @@ const RegisterPage = () => {
     mutationFn: register,
     onSuccess: (response) => {
       setToken(response.data.accessToken);
-
-      navigate("/user");
+      navigate("/userDashboard/home");
     },
     onError: (res) => {
       toast.error(res.response.data.message[0] || res.response.data.message);

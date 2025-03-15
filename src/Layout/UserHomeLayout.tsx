@@ -36,7 +36,7 @@ import {
 import { toast } from "sonner";
 import { Link, Navigate, NavLink, Outlet } from "react-router-dom";
 
-const DashboardLayout = () => {
+const UserHomeLayout = () => {
   const { token, setToken, user, setUser } = useTokenStore((state) => state);
 
   const logout = (event: React.FormEvent) => {
@@ -49,7 +49,7 @@ const DashboardLayout = () => {
     useTokenStore.persist.clearStorage();
   };
 
-  if (!token || !user || user.role != "1") {
+  if (!token || !user || user.role != "0") {
     return <Navigate to={"/auth/login"} replace />;
   }
   return (
@@ -59,7 +59,7 @@ const DashboardLayout = () => {
           <div className="flex h-full  flex-col gap-2">
             <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
               <Link
-                to="/dashboard/home"
+                to="/userDashboard/home"
                 className="flex items-center gap-2 font-semibold"
               >
                 <Package2 className="h-6 w-6" />
@@ -73,7 +73,7 @@ const DashboardLayout = () => {
             <div className="flex-1">
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 <NavLink
-                  to="/dashboard/home"
+                  to="/userDashboard/home"
                   className={({ isActive }) => {
                     return `flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary ${
                       isActive && "bg-muted"
@@ -253,4 +253,4 @@ const DashboardLayout = () => {
   );
 };
 
-export default DashboardLayout;
+export default UserHomeLayout;

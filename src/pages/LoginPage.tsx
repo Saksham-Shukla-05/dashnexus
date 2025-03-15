@@ -33,7 +33,7 @@ const LoginForm = () => {
 
       setTimeout(() => {
         if (response.data.user.role === "0") {
-          navigate("/user");
+          navigate("/userDashboard/home");
         } else {
           navigate("/dashboard/home");
         }
